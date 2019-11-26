@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .models import Movie, Genre, Review
 from .forms import ReviewForm
 from datetime import datetime, timedelta
@@ -13,28 +13,10 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
 
-movie_list = [
-    {
-        'title': '엑시트',
-        'movie_pk': 1,
-        'movieCd': 101,
-        'post_url':'https://picsum.photos/id/599/200/300',
-        'genre': '코미디',
-        'openingDt': '2019-07-31',
-    },
-    {
-        'title': '마이펫의 이중생활2',
-        'movie_pk': 2,
-        'movieCd': 102,
-        'post_url': 'https://picsum.photos/id/399/200/300',
-        'genre': '애니메이션',
-        'openingDt': '2019-07-31',
-    },
-]
-
 
 def index(request):
     if request.user.is_authenticated:
+        movie_list = Movie.objects.all()
         context = { 'movie_list': movie_list }
         return render(request, 'movies/index.html', context)
     return redirect('accounts:login')
@@ -43,13 +25,18 @@ def index(request):
 @login_required
 def detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
+    genres = movie.genres.all()
+    actors = movie.actors.all()
+    directors = movie.directors.all()
     review_form = ReviewForm()
     reviews = movie.reviews.all()
     context = {
-        ''
         'movie': movie,
-        'review_form': review_form,
+        'genres': genres,
         'reviews': reviews,
+        'review_form': review_form,
+        'actors': actors,
+        'directors': directors,
     }
     return render(request, 'movies/detail.html', context)
 
@@ -75,6 +62,32 @@ def review_delete(request, movie_pk, review_pk):
         return redirect('movies:detail', movie_pk)
     return HttpResponse('You are Unauthorized', status=401)
 
+
+def like(request, movie_pk):
+    user = request.user
+    movie = get_object_or_404(Movie, pk=movie_pk)
+
+    if user in movie.liked_user.all():
+        user.liked_movies.remove(movie)
+        liked = False
+    else:
+        user.liked_movies.add(movie)
+        liked = True
+    context = {
+        'liked': liked,
+    }
+    return JsonResponse(context)
+
+
+def mylist(request):
+    user = request.user
+    movies = user.liked_movies.all()
+    context = {
+        'movies': movies
+    }
+    return render(request, 'movies/mylist.html', context)
+    
+
 def push(request):
     key = config('KEY')
     # targetDt = '20191101'
@@ -85,7 +98,7 @@ def push(request):
                 'X-Naver-Client-Secret' : client_secret,
             }
 
-    for i in range(52):
+    for i in range(1, 4):
         targetDt = datetime(2019, 11, 23) - timedelta(weeks=i)
         targetDt = targetDt.strftime('%Y%m%d')
         DAILY_BOXOFFICE_API_URL = f'http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key={key}&targetDt={targetDt}'

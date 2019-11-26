@@ -3,10 +3,37 @@
 {% block title %}디테일 페이지{% endblock title %}
 
 {% block container %}
-<h2>{{ movie.title }}</h2>
-<h4>{{ movie.genre }}</h4>
-<img src="{{ movie.post_url }}" alt="">
 
+<img src="{{ movie.poster_url }}" alt="">
+<h2>{{ movie.title }}</h2>
+<h4>{% for genre in genres %}{{genre.name}}, {% endfor %}</h4>
+<h5>{{ movie.showtime }}분</h5>
+<p>
+  <i
+    class="{% if user in movie.liked_user.all %}fas{% else %}far{% endif %} fa-heart fa-lg"
+    id="like-btn"
+    data-id="{{ movie.pk }}"
+    style="color: red"
+  >
+  </i>
+
+</p>
+
+<h3>감독</h3>
+{% for director in directors %}
+<img src="{{ director.img }}">
+<h4>{{ director.name }}</h4>
+{% endfor %}
+
+<h3>출연배우</h3>
+{% for actor in actors %}
+<img src="{{ actor.img }}">
+<h4>{{ actor.name }}</h4>
+{% endfor %}
+<hr>
+
+
+<hr>
 {% if user.is_authenticated %}
 <form action="{% url 'movies:review_create' movie.pk %}" method="post">
   {% csrf_token %}
@@ -19,7 +46,7 @@
 {% for review in reviews %}
   <li>
     {% if request.user == review.user %}
-    <form action="{% url 'movies:reviews_delete' movie.pk review.pk %}" method="post">
+    <form action="{% url 'movies:review_delete' movie.pk review.pk %}" method="post">
       {% csrf_token %}
       <span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
       <button class="btn btn-danger" type="submit">삭제하기</button>
@@ -30,5 +57,21 @@
   </li>
 {% endfor %}
 
+<script>
+  const likeBtn = document.querySelector('#like-btn')
+  likeBtn.addEventListener('click', function(event) {
+    const movieId = event.target.dataset.id
+    axios.get(`/movies/${movieId}/like/`)
+      .then(function(response) {
+        if(response.data.liked) {
+          likeBtn.classList.remove('far')
+          likeBtn.classList.add('fas')
+        } else {
+          likeBtn.classList.remove('fas')
+          likeBtn.classList.add('far')
+        }
+      })
+  })
+</script>
 
 {% endblock container %}
