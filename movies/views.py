@@ -12,6 +12,28 @@ from .models import Movie, Genre, Actor, Director
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
+<<<<<<< HEAD
+
+movie_list = [
+    {
+        'title': '엑시트',
+        'movie_pk': 1,
+        'movieCd': 101,
+        'post_url':'https://picsum.photos/id/599/200/300',
+        'genre': '코미디',
+        'openingDt': '2019-07-31',
+    },
+    {
+        'title': '마이펫의 이중생활2',
+        'movie_pk': 2,
+        'movieCd': 102,
+        'post_url': 'https://picsum.photos/id/399/200/300',
+        'genre': '애니메이션',
+        'openingDt': '2019-07-31',
+    },
+]
+=======
+>>>>>>> 93d513fea96965d37ab694535e16c95d49a14034
 
 
 def index(request):
@@ -62,6 +84,8 @@ def review_delete(request, movie_pk, review_pk):
         return redirect('movies:detail', movie_pk)
     return HttpResponse('You are Unauthorized', status=401)
 
+<<<<<<< HEAD
+=======
 
 def like(request, movie_pk):
     user = request.user
@@ -88,6 +112,7 @@ def mylist(request):
     return render(request, 'movies/mylist.html', context)
     
 
+>>>>>>> 93d513fea96965d37ab694535e16c95d49a14034
 def push(request):
     key = config('KEY')
     # targetDt = '20191101'
@@ -98,7 +123,11 @@ def push(request):
                 'X-Naver-Client-Secret' : client_secret,
             }
 
+<<<<<<< HEAD
+    for i in range(52):
+=======
     for i in range(1, 4):
+>>>>>>> 93d513fea96965d37ab694535e16c95d49a14034
         targetDt = datetime(2019, 11, 23) - timedelta(weeks=i)
         targetDt = targetDt.strftime('%Y%m%d')
         DAILY_BOXOFFICE_API_URL = f'http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key={key}&targetDt={targetDt}'
