@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}디테일 페이지{% endblock title %}
+
+{% block container %}
+<h2>{{ movie.title }}</h2>
+<h4>{{ movie.genre }}</h4>
+<img src="{{ movie.post_url }}" alt="">
+
+{% if user.is_authenticated %}
+<form action="{% url 'movies:review_create' movie.pk %}" method="post">
+  {% csrf_token %}
+  {{ review_form.as_table }}
+  <button type="submit">작성하기</button>
+</form>
+{% endif %}
+<hr>
+<ul>
+{% for review in reviews %}
+  <li>
+    {% if request.user == review.user %}
+    <form action="{% url 'movies:reviews_delete' movie.pk review.pk %}" method="post">
+      {% csrf_token %}
+      <span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
+      <button class="btn btn-danger" type="submit">삭제하기</button>
+    </form>
+    {% else %}
+    <span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
+    {% endif %}
+  </li>
+{% endfor %}
+
+
+{% endblock container %}

@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-reboot.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-grid.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- FontAwesome -->
+  <script src="https://kit.fontawesome.com/3b26fded11.js" crossorigin="anonymous"></script>
+  <!-- Axios -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <title>{% block title %}{% endblock title %}</title>
+</head>
+<body>
+  <header class="container">
+    <h1>저희 페이지 오신걸 환영합니다.</h1>
+    {% if user.is_authenticated %}
+    <p>
+      <span>Hello, {{ user.username }}</span>
+      <a href="{% url 'accounts:logout' %}">로그아웃</a>
+      <a href="{% url 'accounts:update' %}">회원정보 수정</a>
+      
+    </p>
+    {% else %}
+    <p>
+      <a href="{% url 'accounts:login' %}">로그인</a>
+      <a href="{% url 'accounts:signup' %}">회원가입</a>
+    </p>
+    {% endif %}
+    {% comment %} <a href="{% url 'accounts:login' %}">[홈으로]</a> {% endcomment %}
+    <hr>
+  </header>
+
+  <div class="container">
+  {% block container %}{% endblock container %}
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
