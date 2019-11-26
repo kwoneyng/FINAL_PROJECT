@@ -10,7 +10,6 @@ class Movie(models.Model):
     title = models.CharField(max_length=50)
     code = models.CharField(max_length=10, unique=True)
     genres = models.ManyToManyField(Genre, related_name='movies')
-    prdtyear = models.CharField(max_length=10)
     openyear = models.CharField(max_length=10)
     showtime = models.CharField(max_length=10)
     watchgrade = models.CharField(max_length=30)
@@ -25,12 +24,14 @@ class Director(models.Model):
     name = models.CharField(max_length=20)
     code = models.CharField(max_length=10, unique=True)
     movies = models.ManyToManyField(Movie, related_name='directors')
+    img = models.CharField(max_length=500)
 
 
 class Actor(models.Model):
     name = models.CharField(max_length=20)
     code = models.CharField(max_length=10, unique=True)
     movies = models.ManyToManyField(Movie, related_name='actors')
+    img = models.CharField(max_length=500)
 
 
 class Review(models.Model):
