@@ -8,14 +8,16 @@
       {% for movie in movie_list %}
         <div class="col-12 col-md-6 col-lg-4 col-xl-3">
           <div class="card" style="width: 16rem;">
-            <img src="{{ movie.post_url }}" class="card-img-top" alt="exit">
+            <img src="{{ movie.poster_url }}" class="card-img-top" alt="exit">
             <div class="card-body">
               <h4 class="card-title"> {{ movie.title }} </h4>
-              <button class="btn btn-info btn-sm">9.07</button>
+              {% comment %} <button class="btn btn-info btn-sm">9.07</button> {% endcomment %}
               <hr>
               <p class="card-text"> {{ movie.genre }} </p>
-              <p class="card-text"> 개봉일: {{ movie.openingDt }} </p>
-              <a href="{% url 'movies:detail' movie.movie_Cd %}" target="__blank__" class="btn btn-success">영화정보 보러가기</a>
+              <p class="card-text"> {{ movie.watchgrade }} </p>
+              {% comment %} <p class="card-text"> 개봉연도: {{ movie.openyear }} </p> {% endcomment %}
+              
+              <a href="{% url 'movies:detail' movie.pk %}" target="__blank__" class="btn btn-success">영화정보 보러가기</a>
               {% comment %} detail page {% endcomment %}
             </div>
           </div>

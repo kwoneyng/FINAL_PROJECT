@@ -33,7 +33,8 @@
       <a href="{% url 'accounts:signup' %}">회원가입</a>
     </p>
     {% endif %}
-    {% comment %} <a href="{% url 'accounts:login' %}">[홈으로]</a> {% endcomment %}
+    <a href="{% url 'movies:index' %}">[홈으로]</a>
+    <a href="{% url 'movies:mylist' %}">[찜 목록]</a>
     <hr>
   </header>
 
