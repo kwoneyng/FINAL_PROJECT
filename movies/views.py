@@ -13,24 +13,6 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
 
-movie_list = [
-    {
-        'title': '엑시트',
-        'movie_pk': 1,
-        'movieCd': 101,
-        'post_url':'https://picsum.photos/id/599/200/300',
-        'genre': '코미디',
-        'openingDt': '2019-07-31',
-    },
-    {
-        'title': '마이펫의 이중생활2',
-        'movie_pk': 2,
-        'movieCd': 102,
-        'post_url': 'https://picsum.photos/id/399/200/300',
-        'genre': '애니메이션',
-        'openingDt': '2019-07-31',
-    },
-]
 
 def index(request):
     if request.user.is_authenticated:
@@ -103,6 +85,59 @@ def mylist(request):
         'movies': movies
     }
     return render(request, 'movies/mylist.html', context)
+
+
+def recommend_list(request):
+    user = request.user
+    movies = user.liked_movies.all()
+
+    preference_dict = {}
+    for movie in movies:
+        favorite_genres = movie.genres.all()
+        # pprint(favorite_genres)
+        for genre_liked in favorite_genres:
+            # print(genre_liked.name)
+            if genre_liked.name in preference_dict:
+                preference_dict[genre_liked.name] += 1
+            else:
+                preference_dict[genre_liked.name] = 1
+
+    preference_list = []
+    for key, value in preference_dict.items():
+        preference_list.append([value, key])
+    
+    preference_list.sort(reverse=True)
+    sorted_preference = preference_list[:4]
+
+    # 선호 장르별 영화 추천
+    for n, genreNm in sorted_preference:
+        genre = get_object_or_404(Genre, name=genreNm)
+        
+
+    # genre_list = []
+    # for i in range(len(sorted_preference)):
+    #     if i > 3:
+    #         break
+    #     genre_list[i] = sorted_preference[i][1]
+        
+    # movie_list = Movie.objects.all()
+    # cnt = 0
+    # recommendation = []
+    # for movie in movie_list:
+    #     if cnt > 20:
+    #         break
+
+    #     for genre_liked in genre_list:
+    #         if genre_liked in movie.genres.all():
+    #             cnt += 1
+    #             recommendation.append(movie)
+    #             break
+
+    # context = {
+    #     'recommendation': recommendation
+    # }
+
+    return render(request, 'movies/recommend.html')
     
 
 def push(request):
