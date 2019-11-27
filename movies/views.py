@@ -108,14 +108,31 @@ def recommend_list(request):
     
     preference_list.sort(reverse=True)
     sorted_preference = preference_list[:4]
-
+    print('-')
+    print('preference list')
     print(sorted_preference)
-    # 선호 장르별 영화 추천
-    for n, genreNm in sorted_preference:
-        genre = get_object_or_404(Genre, name=genreNm)
-        
 
-    return render(request, 'movies/recommend.html')
+    num_of_recommend_genres = len(sorted_preference)
+    
+    genre_list = []
+    for n, genreNm in sorted_preference:
+        genre_list.append(genreNm)
+
+    context = {
+        'genre_list': {}
+    }
+
+    for each_genre in genre_list:
+        genre = get_object_or_404(Genre, name=each_genre)
+
+        movies = genre.movies.all()[:5]
+        context['genre_list'][each_genre] = movies
+    print('-')    
+    print(context)
+    print()
+    
+        
+    return render(request, 'movies/recommend.html', context)
     
 
 def push(request):
@@ -128,7 +145,7 @@ def push(request):
                 'X-Naver-Client-Secret' : client_secret,
             }
 
-    for i in range(1,4):
+    for i in range(1, 6):
         print('==================================')
         print(f'{i}주차 영화 시작!')
         targetDt = datetime(2019, 11, 23) - timedelta(weeks=i)
@@ -138,24 +155,25 @@ def push(request):
         movie_info_url = f"http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieInfo.json?key={key}&movieCd="
         for each_movie in response:
             movieNm = each_movie['movieNm']
-            print(f'{movieNm}영화 시작')
             movieCd = each_movie['movieCd']
-            if Movie.objects.filter(code=movieCd):
-                continue
-            # print(each_movie)
-            audience = each_movie['audiCnt']
-            openyear = each_movie['openDt'][:4]
-            # response 초기화 : 영화진흥원 영화 상세 API
-            response_movieCd = requests.get(movie_info_url+movieCd).json()['movieInfoResult']['movieInfo']
-            if response_movieCd['showTm']:
-                showtime = response_movieCd['showTm']
-            else:
-                showtime = ''
+            try:
+                if Movie.objects.filter(code=movieCd):
+                    continue
+                print(f'{movieNm}영화 시작')
+                # print(each_movie)
+                audience = each_movie['audiCnt']
+                openyear = each_movie['openDt'][:4]
+                # response 초기화 : 영화진흥원 영화 상세 API
+                response_movieCd = requests.get(movie_info_url+movieCd).json()['movieInfoResult']['movieInfo']
+                if response_movieCd['showTm']:
+                    showtime = response_movieCd['showTm']
+                else:
+                    showtime = ''
 
-            if response_movieCd['audits']:
-                watchgrade = response_movieCd['audits'][0]['watchGradeNm']
-            else:
-                watchgrade = ''
+                if response_movieCd['audits']:
+                    watchgrade = response_movieCd['audits'][0]['watchGradeNm']
+                else:
+                    watchgrade = ''
 
             if response_movieCd['companys']:
                 company = response_movieCd['companys'][0]['companyNm']
@@ -206,6 +224,7 @@ def push(request):
                         if nm in movie['actor'].split('|'):
                             select = 1
                             link = movie['link']
+                            rating = movie['userRating']
                             break
                     if select == 1 :
                         link = movie['link']
@@ -256,9 +275,8 @@ def push(request):
                     discrip = soup.select_one('p.con_tx').text
                 else:
                     discrip = ''
-                
+
             else:
-                # print('display = 1')
                 movie = response_naver['items'][0]
                 link = movie['link']
                 rating = movie['userRating']
@@ -271,7 +289,9 @@ def push(request):
                 for tag in imgTag:
                     if 'src' in tag.attrs:
                         poster_url = tag.attrs['src'].split('jpg?')[0]+'jpg'
-                
+                    else:
+                        poster_url = 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'
+
                 div_people = soup.find('div', 'people')
                 imgPtag = div_people.find_all('img')
 
@@ -304,39 +324,39 @@ def push(request):
                 else:
                     discrip = ''
 
-            movieform = Movie()
-            movieform.title = movieNm
-            movieform.code = movieCd
-            movieform.openyear = openyear
-            movieform.showtime = showtime
-            movieform.watchgrade = watchgrade
-            movieform.company = company
-            movieform.audience = audience
-            movieform.discription = discrip
-            movieform.poster_url = poster_url
-            movieform.rating = float(rating)
-            movie = movieform.save()
+                movieform = Movie()
+                movieform.title = movieNm
+                movieform.code = movieCd
+                movieform.openyear = openyear
+                movieform.showtime = showtime
+                movieform.watchgrade = watchgrade
+                movieform.company = company
+                movieform.audience = audience
+                movieform.discription = discrip
+                movieform.poster_url = poster_url
+                movieform.rating = float(rating)
+                movieform.save()
 
-            movie = Movie.objects.filter(code=movieCd).first()
-            print(selActor)
-            print(selDirector)
-            print(genres)
+                movie = Movie.objects.filter(code=movieCd).first()
+                print(selActor)
+                print(selDirector)
+                print(genres)
 
-            for cd, nm in selActor:
-                act = Actor.objects.filter(code=cd).first()
-                if act:
-                    act.movies.add(movie)
-            
-            for cd, nm in selDirector:
-                dirt = Director.objects.filter(code=cd).first()
-                if dirt :
-                    dirt.movies.add(movie)
-            
-            for nm in genres:
-                gen = Genre.objects.filter(name=nm).first()
-                print(f"{gen.id}, {movie.id}")
-                if gen:
-                    gen.movies.add(movie)
-                    # movie.genres.add(gen)
+                for cd, nm in selActor:
+                    act = Actor.objects.filter(code=cd).first()
+                    if act:
+                        act.movies.add(movie)
+                
+                for cd, nm in selDirector:
+                    dirt = Director.objects.filter(code=cd).first()
+                    if dirt :
+                        dirt.movies.add(movie)
+                
+                for nm in genres:
+                    gen = Genre.objects.filter(name=nm).first()
+                    if gen:
+                        gen.movies.add(movie)
 
+            except:
+                pass
 

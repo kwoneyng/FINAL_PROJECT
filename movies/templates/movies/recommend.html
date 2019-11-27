@@ -4,9 +4,17 @@
 
 {% block container %}
 
-{% for movie in recommendation %}
-  <h3>{{ movie.title }}</h3>
-
+{% for genreNm, movies in genre_list.items %}
+  <h2> {{ genreNm }} </h2>
+  <ul>
+    {% for movie in movies %}
+      <div>
+        <img src="{{ movie.poster_url }}?type=m203_290_2">
+        <p>{{ movie.title }}</p>
+        <p><a href="{% url 'movies:detail' movie.pk %}" class="btn btn-success">영화정보</a></p>
+      </div>
+    {% endfor %}
+  </ul>
 {% endfor %}
 
 {% endblock container %}
