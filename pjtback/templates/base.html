@@ -63,8 +63,9 @@
         <h1>MOVIE4</h1>
     </div>
     <div class="fucn" >
-        <a href="{% url 'movies:index' %}" style="color: #2A0A12; text-decoration:none;">[홈으로]</a>
-        <a href="{% url 'movies:mylist' %}" style="color: #2A0A12; text-decoration:none;">[찜 목록]</a>
+        <a href="{% url 'movies:index' %}" style="color: #2A0A12; text-decoration:none;">[ 홈으로 ]</a> | 
+        <a href="{% url 'movies:mylist' %}" style="color: #2A0A12; text-decoration:none;">[ 찜 목록 ]</a> | 
+        <a href="{% url 'movies:recommend_list' %}" style="color: #2A0A12; text-decoration:none;">[ 추천 영화 ]</a>
     </div>
     {% if user.is_authenticated %}
     <div class="auth">
