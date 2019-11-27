@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ actor.name }}{% endblock title %}
+
+{% block container %}
+<div>
+  <img src="{{ actor.img }}" >
+  <h4>{{ actor.name }}</h4>
+</div>
+{% for movie in movies %}
+  <img src="{{ movie.poster_url }}?type=m203_290_2">
+{% endfor %}
+
+{% endblock container %}

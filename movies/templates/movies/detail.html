@@ -46,7 +46,7 @@
 				<div class="card" style="width:140px; border:0;">
 					<img src="{{ director.img }}" class="card-img-top">
 					<div style="padding: 5px; 5px; 5px; 5px; text-align : center; margin : 0px;">
-						<p>{{ director.name }}</p>
+            <a href="{% url 'movies:director_detail' director.id %}">{{ director.name }}</a>
 					</div>
 				</div>
 			{% endfor %}
@@ -62,7 +62,8 @@
 				<div class="card mr-4" style="width:140px; border:0;">
 					<img src="{{ actor.img }}" class="card-img-top">
 					<div style="padding: 5px; 5px; 5px; 5px; text-align : center; margin : 0px;">
-						<p>{{ actor.name }}</p>
+						{% comment %} <p>{{ actor.name }}</p> {% endcomment %}
+            <a href="{% url 'movies:actor_detail' actor.id %}">{{ actor.name }}</a>
 					</div>
 				</div>
 			{% endfor %}
