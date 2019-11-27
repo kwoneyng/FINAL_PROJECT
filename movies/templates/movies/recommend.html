@@ -4,9 +4,12 @@
 
 {% block container %}
 
-{% for movie in recommendation %}
-  <h3>{{ movie.title }}</h3>
+  {% comment %} {% for m in gen %}
+    <h2>{{ m.title }}</h2>
+  {% endfor %} {% endcomment %}
 
 {% endfor %}
+
+<h2> hi </h2>
 
 {% endblock container %}
