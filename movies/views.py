@@ -12,28 +12,7 @@ from .models import Movie, Genre, Actor, Director
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import requests
-<<<<<<< HEAD
-
-movie_list = [
-    {
-        'title': '엑시트',
-        'movie_pk': 1,
-        'movieCd': 101,
-        'post_url':'https://picsum.photos/id/599/200/300',
-        'genre': '코미디',
-        'openingDt': '2019-07-31',
-    },
-    {
-        'title': '마이펫의 이중생활2',
-        'movie_pk': 2,
-        'movieCd': 102,
-        'post_url': 'https://picsum.photos/id/399/200/300',
-        'genre': '애니메이션',
-        'openingDt': '2019-07-31',
-    },
-]
-=======
->>>>>>> 93d513fea96965d37ab694535e16c95d49a14034
+from pprint import pprint
 
 
 def index(request):
@@ -84,8 +63,6 @@ def review_delete(request, movie_pk, review_pk):
         return redirect('movies:detail', movie_pk)
     return HttpResponse('You are Unauthorized', status=401)
 
-<<<<<<< HEAD
-=======
 
 def like(request, movie_pk):
     user = request.user
@@ -110,9 +87,61 @@ def mylist(request):
         'movies': movies
     }
     return render(request, 'movies/mylist.html', context)
+
+
+def recommend_list(request):
+    user = request.user
+    movies = user.liked_movies.all()
+
+    preference_dict = {}
+    for movie in movies:
+        favorite_genres = movie.genres.all()
+        # pprint(favorite_genres)
+        for genre_liked in favorite_genres:
+            # print(genre_liked.name)
+            if genre_liked.name in preference_dict:
+                preference_dict[genre_liked.name] += 1
+            else:
+                preference_dict[genre_liked.name] = 1
+
+    preference_list = []
+    for key, value in preference_dict.items():
+        preference_list.append([value, key])
+    
+    preference_list.sort(reverse=True)
+    sorted_preference = preference_list[:4]
+
+    # 선호 장르별 영화 추천
+    for n, genreNm in sorted_preference:
+        genre = get_object_or_404(Genre, name=genreNm)
+        
+
+    # genre_list = []
+    # for i in range(len(sorted_preference)):
+    #     if i > 3:
+    #         break
+    #     genre_list[i] = sorted_preference[i][1]
+        
+    # movie_list = Movie.objects.all()
+    # cnt = 0
+    # recommendation = []
+    # for movie in movie_list:
+    #     if cnt > 20:
+    #         break
+
+    #     for genre_liked in genre_list:
+    #         if genre_liked in movie.genres.all():
+    #             cnt += 1
+    #             recommendation.append(movie)
+    #             break
+
+    # context = {
+    #     'recommendation': recommendation
+    # }
+
+    return render(request, 'movies/recommend.html')
     
 
->>>>>>> 93d513fea96965d37ab694535e16c95d49a14034
 def push(request):
     key = config('KEY')
     # targetDt = '20191101'
@@ -123,11 +152,7 @@ def push(request):
                 'X-Naver-Client-Secret' : client_secret,
             }
 
-<<<<<<< HEAD
-    for i in range(52):
-=======
-    for i in range(1, 4):
->>>>>>> 93d513fea96965d37ab694535e16c95d49a14034
+    for i in range(1, 3):
         targetDt = datetime(2019, 11, 23) - timedelta(weeks=i)
         targetDt = targetDt.strftime('%Y%m%d')
         DAILY_BOXOFFICE_API_URL = f'http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key={key}&targetDt={targetDt}'

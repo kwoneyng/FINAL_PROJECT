@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}추천{% endblock title %}
+
+{% block container %}
+
+{% for movie in recommendation %}
+  <h3>{{ movie.title }}</h3>
+
+{% endfor %}
+
+{% endblock container %}
