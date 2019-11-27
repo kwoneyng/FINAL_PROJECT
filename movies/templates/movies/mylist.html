@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 
 {% block title %}나의 찜 리스트{% endblock title %}
-
+{% block style %}
+    .main_div { min-height: 1000px; }
+{% endblock style %}
 {% block container %}
+<div class="main_div" style="background-color:white; padding-top: 40px; padding-left: 10px; color:#2A0A12;">
 {% for movie in movies %}
-  <img src="{{ movie.poster_url }}">
+
+  <img src="{{ movie.poster_url }}" style="width: 200px; height: 300px;">
   <h2> {{ movie.title }} </h2>
 
 {% endfor %}
+</div>
 {% endblock container %}
+
