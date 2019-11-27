@@ -109,33 +109,11 @@ def recommend_list(request):
     preference_list.sort(reverse=True)
     sorted_preference = preference_list[:4]
 
+    print(sorted_preference)
     # 선호 장르별 영화 추천
     for n, genreNm in sorted_preference:
         genre = get_object_or_404(Genre, name=genreNm)
         
-
-    # genre_list = []
-    # for i in range(len(sorted_preference)):
-    #     if i > 3:
-    #         break
-    #     genre_list[i] = sorted_preference[i][1]
-        
-    # movie_list = Movie.objects.all()
-    # cnt = 0
-    # recommendation = []
-    # for movie in movie_list:
-    #     if cnt > 20:
-    #         break
-
-    #     for genre_liked in genre_list:
-    #         if genre_liked in movie.genres.all():
-    #             cnt += 1
-    #             recommendation.append(movie)
-    #             break
-
-    # context = {
-    #     'recommendation': recommendation
-    # }
 
     return render(request, 'movies/recommend.html')
     
@@ -150,7 +128,7 @@ def push(request):
                 'X-Naver-Client-Secret' : client_secret,
             }
 
-    for i in range(1):
+    for i in range(1,4):
         print('==================================')
         print(f'{i}주차 영화 시작!')
         targetDt = datetime(2019, 11, 23) - timedelta(weeks=i)
@@ -195,12 +173,12 @@ def push(request):
             genres = []
             if response_movieCd['genres']:
                 for genre in response_movieCd['genres']:
+                    genres.append(genre['genreNm'])
                     if Genre.objects.filter(name=genre['genreNm']):
                         continue
                     gen = Genre()
                     gen.name = genre['genreNm']
                     gen.save()
-                    genres.append(genre['genreNm'])
 
             movie_people_url = f"http://www.kobis.or.kr/kobisopenapi/webservice/rest/people/searchPeopleList.json?key={key}&peopleNm="
             selActor = []
@@ -222,8 +200,10 @@ def push(request):
             if response_naver['display'] > 1:
                 for movie in response_naver['items']:
                     select = 0
-                    for cd, nm in selDirector:
-                        if nm in movie['director'].split('|'):
+                    for cd, nm in selActor:
+                        print(nm)
+                        print(movie['actor'].split('|'))
+                        if nm in movie['actor'].split('|'):
                             select = 1
                             link = movie['link']
                             break
@@ -231,6 +211,8 @@ def push(request):
                         link = movie['link']
                         rating = movie['userRating']
                         break
+                if select == 0:
+                    continue
                 html = urlopen(link)
                 source = html.read()
                 html.close()
@@ -240,6 +222,8 @@ def push(request):
                 for tag in imgTag:
                     if 'src' in tag.attrs:
                         poster_url = tag.attrs['src'].split('jpg?')[0]+'jpg'
+                    else:
+                        poster_url = 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'
 
                 div_people = soup.find('div', 'people')
                 imgPtag = div_people.find_all('img')
@@ -331,7 +315,7 @@ def push(request):
             movieform.discription = discrip
             movieform.poster_url = poster_url
             movieform.rating = float(rating)
-            movieform.save()
+            movie = movieform.save()
 
             movie = Movie.objects.filter(code=movieCd).first()
             print(selActor)
@@ -350,96 +334,9 @@ def push(request):
             
             for nm in genres:
                 gen = Genre.objects.filter(name=nm).first()
+                print(f"{gen.id}, {movie.id}")
                 if gen:
                     gen.movies.add(movie)
+                    # movie.genres.add(gen)
 
 
-
-            # response_naver = requests.get(url,headers=HEADERS).json()
-            # if response_naver['display'] > 1:
-            #     for i in response_naver['items']:
-            #         if i['director'][:dirlen] == director:
-            #             movieImg = i['image']
-            #             link = i['link']
-            #             movie.poster_url = i['image']
-            #             html = urlopen(link)
-            #             source = html.read()
-            #             html.close()
-            #             soup = BeautifulSoup(source, 'html.parser')
-            #             if soup.select_one('p.con_tx').text:
-            #                 discrip = soup.select_one('p.con_tx').text
-            #             else:
-            #                 discrip = ''
-            #             movie.discription = discrip   
-            #             div = soup.find('div', 'people')
-            #             img_tag = div.find_all('img')
-            #             for img in img_tag:
-            #                 if 'alt' in img.attrs and 'src' in img.attrs:
-            #                     for peopleNm, peopleCd in peopleCan:
-            #                         if peopleNm == img.attrs['alt']:
-            #                             actor = Actor()
-            #                             actor.code = peopleCd
-            #                             actor.img = img.attrs['src']
-            #                             actor.name = peopleNm                                        
-            #                             try:
-            #                                 actor.save()
-            #                             except:
-            #                                 pass
-            #                     if director == img.attrs['alt']:
-            #                         drt = Director()
-            #                         drt.name = director
-            #                         drt.img = img.attrs['src']
-            #                         drt.code = directorCd
-            #                         try :
-            #                             drt.save()
-            #                         except:
-            #                             pass
-
-                        
-            # else :
-            #     if response_naver['items']:
-            #         movieImg = response_naver['items'][0]['image']
-            #         link = response_naver['items'][0]['link']
-            #         movie.poster_url = response_naver['items'][0]['image']
-            #         html = urlopen(link)
-            #         source = html.read()
-            #         html.close()
-            #         soup = BeautifulSoup(source, 'html.parser')
-            #         if soup.select_one('p.con_tx').text:
-            #             discrip = soup.select_one('p.con_tx').text
-            #         else:
-            #             discrip = ''
-            #         movie.discription = discrip
-            #         div = soup.find('div', 'people')
-            #         img_tag = div.find_all('img')
-            #         for img in img_tag:
-            #             if 'alt' in img.attrs and 'src' in img.attrs['src']:
-            #                 for peopleNm, peopleCd in peopleCan:
-            #                     if peopleNm == img.attrs['alt']:
-            #                         actor = Actor()
-            #                         actor.code = peopleCd
-            #                         actor.img = img.attrs['src']
-            #                         actor.name = peopleNm
-            #                         try :
-            #                             actor.save()
-            #                         except:
-            #                             pass
-            #                         break
-            #     else :
-            #         movie.poster_url = ''
-            #         movie.discription = ''
-                # image = response['items'][0]['image']
-                # link = response['items'][0]['link']
-                # print(image)
-                # print(link)
-                # movie.save()
-                # embed()
-                # movie = Movie.objects.filter(code=movieCd).first()
-                # drt = Director.objects.filter(code=directorCd).first()
-                # drt.movies.add(movie)
-                # for i in genres:
-                #     genre = Genre.objects.filter(name=i['genreNm']).first()
-                #     movie.genres.add(genre)
-                # for peopleNm, peopleCd in peopleCan:
-                #     actor = Actor.objects.filter(code=peopleCd).first()
-                #     actor.movies.add(movie)
