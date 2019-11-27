@@ -18,6 +18,7 @@ class Movie(models.Model):
     discription = models.TextField()
     poster_url = models.CharField(max_length=150)
     liked_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_movies')
+    rating = models.FloatField()
 
 
 class Director(models.Model):
