@@ -108,6 +108,8 @@ def recommend_list(request):
     
     preference_list.sort(reverse=True)
     sorted_preference = preference_list[:4]
+    print('-')
+    print('preference list')
     print(sorted_preference)
 
     num_of_recommend_genres = len(sorted_preference)
@@ -122,10 +124,12 @@ def recommend_list(request):
 
     for each_genre in genre_list:
         genre = get_object_or_404(Genre, name=each_genre)
-        movies = genre.movies.all()[:5]
-        context['genre_list'][each_genre] = [movies]
 
+        movies = genre.movies.all()[:5]
+        context['genre_list'][each_genre] = movies
+    print('-')    
     print(context)
+    print()
     
         
     return render(request, 'movies/recommend.html', context)
