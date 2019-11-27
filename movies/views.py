@@ -174,188 +174,186 @@ def push(request):
                     watchgrade = response_movieCd['audits'][0]['watchGradeNm']
                 else:
                     watchgrade = ''
+                if response_movieCd['companys']:
+                    company = response_movieCd['companys'][0]['companyNm']
+                else:
+                    company = ''
 
-            if response_movieCd['companys']:
-                company = response_movieCd['companys'][0]['companyNm']
-            else:
-                company = ''
+                actors = []
+                for people in response_movieCd['actors']:
+                    actors.append(people['peopleNm'])
 
-            actors = []
-            for people in response_movieCd['actors']:
-                actors.append(people['peopleNm'])
+                directors = []
+                for people in response_movieCd['directors']:
+                    directors.append(people['peopleNm'])
 
-            directors = []
-            for people in response_movieCd['directors']:
-                directors.append(people['peopleNm'])
+                genres = []
+                if response_movieCd['genres']:
+                    for genre in response_movieCd['genres']:
+                        genres.append(genre['genreNm'])
+                        if Genre.objects.filter(name=genre['genreNm']):
+                            continue
+                        gen = Genre()
+                        gen.name = genre['genreNm']
+                        gen.save()
 
-            genres = []
-            if response_movieCd['genres']:
-                for genre in response_movieCd['genres']:
-                    genres.append(genre['genreNm'])
-                    if Genre.objects.filter(name=genre['genreNm']):
-                        continue
-                    gen = Genre()
-                    gen.name = genre['genreNm']
-                    gen.save()
+                movie_people_url = f"http://www.kobis.or.kr/kobisopenapi/webservice/rest/people/searchPeopleList.json?key={key}&peopleNm="
+                selActor = []
+                for actor in actors:
+                    response_peopleNm = requests.get(movie_people_url+actor).json()['peopleListResult']['peopleList']
+                    for people in response_peopleNm:
+                        if movieNm in people['filmoNames'].split('|'):
+                            selActor.append([people['peopleCd'], actor])
+                
+                selDirector = []
+                for director in directors:
+                    response_peopleNm = requests.get(movie_people_url+director).json()['peopleListResult']['peopleList']
+                    for people in response_peopleNm:
+                        if movieNm in people['filmoNames'].split('|'):
+                            selDirector.append([people['peopleCd'], director])
 
-            movie_people_url = f"http://www.kobis.or.kr/kobisopenapi/webservice/rest/people/searchPeopleList.json?key={key}&peopleNm="
-            selActor = []
-            for actor in actors:
-                response_peopleNm = requests.get(movie_people_url+actor).json()['peopleListResult']['peopleList']
-                for people in response_peopleNm:
-                    if movieNm in people['filmoNames'].split('|'):
-                        selActor.append([people['peopleCd'], actor])
-            
-            selDirector = []
-            for director in directors:
-                response_peopleNm = requests.get(movie_people_url+director).json()['peopleListResult']['peopleList']
-                for people in response_peopleNm:
-                    if movieNm in people['filmoNames'].split('|'):
-                        selDirector.append([people['peopleCd'], director])
-
-            naver_url = "https://openapi.naver.com/v1/search/movie.json?query="
-            response_naver = requests.get(naver_url+movieNm, headers=HEADERS).json()
-            if response_naver['display'] > 1:
-                for movie in response_naver['items']:
-                    select = 0
-                    for cd, nm in selActor:
-                        print(nm)
-                        print(movie['actor'].split('|'))
-                        if nm in movie['actor'].split('|'):
-                            select = 1
+                naver_url = "https://openapi.naver.com/v1/search/movie.json?query="
+                response_naver = requests.get(naver_url+movieNm, headers=HEADERS).json()
+                if response_naver['display'] > 1:
+                    for movie in response_naver['items']:
+                        select = 0
+                        for cd, nm in selActor:
+                            print(nm)
+                            print(movie['actor'].split('|'))
+                            if nm in movie['actor'].split('|'):
+                                select = 1
+                                link = movie['link']
+                                rating = movie['userRating']
+                                break
+                        if select == 1 :
                             link = movie['link']
                             rating = movie['userRating']
                             break
-                    if select == 1 :
-                        link = movie['link']
-                        rating = movie['userRating']
-                        break
-                if select == 0:
-                    continue
-                html = urlopen(link)
-                source = html.read()
-                html.close()
-                soup = BeautifulSoup(source, 'html.parser')
-                div_poster = soup.find('div', 'poster')
-                imgTag = div_poster.find_all('img')
-                for tag in imgTag:
-                    if 'src' in tag.attrs:
-                        poster_url = tag.attrs['src'].split('jpg?')[0]+'jpg'
-                    else:
-                        poster_url = 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'
+                        if select == 0:
+                            continue
+                        html = urlopen(link)
+                        source = html.read()
+                        html.close()
+                        soup = BeautifulSoup(source, 'html.parser')
+                        div_poster = soup.find('div', 'poster')
+                        imgTag = div_poster.find_all('img')
+                        for tag in imgTag:
+                            if 'src' in tag.attrs:
+                                poster_url = tag.attrs['src'].split('jpg?')[0]+'jpg'
+                            else:
+                                poster_url = 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'
 
-                div_people = soup.find('div', 'people')
-                imgPtag = div_people.find_all('img')
+                    div_people = soup.find('div', 'people')
+                    imgPtag = div_people.find_all('img')
 
-                for tag in imgPtag:
-                    if 'alt' in tag.attrs and 'src' in tag.attrs:
-                        for cd, nm in selActor:
-                            # print(cd,nm)
-                            if nm == tag.attrs['alt']:
-                                if Actor.objects.filter(code=cd):
-                                    continue
-                                # print(f'{nm} 생성')
-                                actor = Actor()
-                                actor.code = cd
-                                actor.img = tag.attrs['src']
-                                actor.name = nm
-                                actor.save()
-                        for cd, nm in selDirector:
-                            # print(cd,nm)
-                            if nm == tag.attrs['alt']:
-                                if Director.objects.filter(code=cd):
-                                    continue
-                                # print(f'{nm} 생성')
-                                direct = Director()
-                                direct.code = cd
-                                direct.img = tag.attrs['src']
-                                direct.name = nm
-                                direct.save()
-                if soup.select_one('p.con_tx'):
-                    discrip = soup.select_one('p.con_tx').text
+                    for tag in imgPtag:
+                        if 'alt' in tag.attrs and 'src' in tag.attrs:
+                            for cd, nm in selActor:
+                                # print(cd,nm)
+                                if nm == tag.attrs['alt']:
+                                    if Actor.objects.filter(code=cd):
+                                        continue
+                                    # print(f'{nm} 생성')
+                                    actor = Actor()
+                                    actor.code = cd
+                                    actor.img = tag.attrs['src']
+                                    actor.name = nm
+                                    actor.save()
+                            for cd, nm in selDirector:
+                                # print(cd,nm)
+                                if nm == tag.attrs['alt']:
+                                    if Director.objects.filter(code=cd):
+                                        continue
+                                    # print(f'{nm} 생성')
+                                    direct = Director()
+                                    direct.code = cd
+                                    direct.img = tag.attrs['src']
+                                    direct.name = nm
+                                    direct.save()
+                        if soup.select_one('p.con_tx'):
+                            discrip = soup.select_one('p.con_tx').text
+                        else:
+                            discrip = ''
                 else:
-                    discrip = ''
+                    movie = response_naver['items'][0]
+                    link = movie['link']
+                    rating = movie['userRating']
+                    html = urlopen(link)
+                    source = html.read()
+                    html.close()
+                    soup = BeautifulSoup(source, 'html.parser')
+                    div_poster = soup.find('div', 'poster')
+                    imgTag = div_poster.find_all('img')
+                    for tag in imgTag:
+                        if 'src' in tag.attrs:
+                            poster_url = tag.attrs['src'].split('jpg?')[0]+'jpg'
+                        else:
+                            poster_url = 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'
 
-            else:
-                movie = response_naver['items'][0]
-                link = movie['link']
-                rating = movie['userRating']
-                html = urlopen(link)
-                source = html.read()
-                html.close()
-                soup = BeautifulSoup(source, 'html.parser')
-                div_poster = soup.find('div', 'poster')
-                imgTag = div_poster.find_all('img')
-                for tag in imgTag:
-                    if 'src' in tag.attrs:
-                        poster_url = tag.attrs['src'].split('jpg?')[0]+'jpg'
+                    div_people = soup.find('div', 'people')
+                    imgPtag = div_people.find_all('img')
+
+                    for tag in imgPtag:
+                        if 'alt' in tag.attrs and 'src' in tag.attrs:
+                            for cd, nm in selActor:
+                                # print(cd, nm)
+                                if nm == tag.attrs['alt']:
+                                    if Actor.objects.filter(code=cd):
+                                        continue
+                                    # print(f'{nm} 생성')
+                                    actor = Actor()
+                                    actor.code = cd
+                                    actor.img = tag.attrs['src']
+                                    actor.name = nm
+                                    actor.save()
+                            for cd, nm in selDirector:
+                                # print(cd, nm)
+                                if nm == tag.attrs['alt']:
+                                    if Director.objects.filter(code=cd):
+                                        continue
+                                    # print(f'{nm} 생성')
+                                    direct = Director()
+                                    direct.code = cd
+                                    direct.img = tag.attrs['src']
+                                    direct.name = nm
+                                    direct.save()
+                    if soup.select_one('p.con_tx'):
+                        discrip = soup.select_one('p.con_tx').text
                     else:
-                        poster_url = 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'
+                        discrip = ''
 
-                div_people = soup.find('div', 'people')
-                imgPtag = div_people.find_all('img')
+                    movieform = Movie()
+                    movieform.title = movieNm
+                    movieform.code = movieCd
+                    movieform.openyear = openyear
+                    movieform.showtime = showtime
+                    movieform.watchgrade = watchgrade
+                    movieform.company = company
+                    movieform.audience = audience
+                    movieform.discription = discrip
+                    movieform.poster_url = poster_url
+                    movieform.rating = float(rating)
+                    movieform.save()
 
-                for tag in imgPtag:
-                    if 'alt' in tag.attrs and 'src' in tag.attrs:
-                        for cd, nm in selActor:
-                            # print(cd, nm)
-                            if nm == tag.attrs['alt']:
-                                if Actor.objects.filter(code=cd):
-                                    continue
-                                # print(f'{nm} 생성')
-                                actor = Actor()
-                                actor.code = cd
-                                actor.img = tag.attrs['src']
-                                actor.name = nm
-                                actor.save()
-                        for cd, nm in selDirector:
-                            # print(cd, nm)
-                            if nm == tag.attrs['alt']:
-                                if Director.objects.filter(code=cd):
-                                    continue
-                                # print(f'{nm} 생성')
-                                direct = Director()
-                                direct.code = cd
-                                direct.img = tag.attrs['src']
-                                direct.name = nm
-                                direct.save()
-                if soup.select_one('p.con_tx'):
-                    discrip = soup.select_one('p.con_tx').text
-                else:
-                    discrip = ''
+                    movie = Movie.objects.filter(code=movieCd).first()
+                    print(selActor)
+                    print(selDirector)
+                    print(genres)
 
-                movieform = Movie()
-                movieform.title = movieNm
-                movieform.code = movieCd
-                movieform.openyear = openyear
-                movieform.showtime = showtime
-                movieform.watchgrade = watchgrade
-                movieform.company = company
-                movieform.audience = audience
-                movieform.discription = discrip
-                movieform.poster_url = poster_url
-                movieform.rating = float(rating)
-                movieform.save()
-
-                movie = Movie.objects.filter(code=movieCd).first()
-                print(selActor)
-                print(selDirector)
-                print(genres)
-
-                for cd, nm in selActor:
-                    act = Actor.objects.filter(code=cd).first()
-                    if act:
-                        act.movies.add(movie)
-                
-                for cd, nm in selDirector:
-                    dirt = Director.objects.filter(code=cd).first()
-                    if dirt :
-                        dirt.movies.add(movie)
-                
-                for nm in genres:
-                    gen = Genre.objects.filter(name=nm).first()
-                    if gen:
-                        gen.movies.add(movie)
+                    for cd, nm in selActor:
+                        act = Actor.objects.filter(code=cd).first()
+                        if act:
+                            act.movies.add(movie)
+                    
+                    for cd, nm in selDirector:
+                        dirt = Director.objects.filter(code=cd).first()
+                        if dirt :
+                            dirt.movies.add(movie)
+                    
+                    for nm in genres:
+                        gen = Genre.objects.filter(name=nm).first()
+                        if gen:
+                            gen.movies.add(movie)
 
             except:
                 pass

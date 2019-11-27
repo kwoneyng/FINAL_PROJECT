@@ -6,110 +6,123 @@
 		margin-bottom: 0;
 		color: gray;
 	}
+	.center{
+		margin-top:auto;
+		margin-bottom:auto;
+	}
+	hr{
+		margin:0;
+	}
+	ul{
+		margin:0;
+	}
 {% endblock style %}
 
 {% block container %}
-<div class="row">
-	<div>
-		<img src="{{ movie.poster_url }}?type=m203_290_2">
-		<h5 style="text-align:center; width:203px; ">{{ movie.title }}</h5>
-	</div>
-	<div style="margin-left : 30px; width: 70%">
-	<div class="row" style="margin-top: 5px;">
-	<h3>줄거리</h3>
-	<p style="margin-left:auto;">
-			<i
-			class="{% if user in movie.liked_user.all %}fas{% else %}far{% endif %} fa-heart fa-lg"
-			id="like-btn"
-			data-id="{{ movie.pk }}"
-			style="color: red"
-			>
-			</i>
-		</p>
-	</div>
-	<div style="word-break: break-all; margin-left: 10px; margin-top:10px;">
-		&nbsp; {{ movie.discription }}
-	</div>
-	<div style="position : relative;	 bottom: -70px; ">
-		<p class="ex"> 장르 : &nbsp; {% for genre in genres %}{{genre.name}} &nbsp; {% endfor %}</p>
-		<p class="ex"> 상영 시간 : &nbsp; {{ movie.showtime }}분</p>
-		<p class="ex"> 평점 : &nbsp; {{ movie.rating }} 점</p>
-	</div>
-	</div>
-</div>
-
-<div style="margin-top:40px;">
-	<h3 >감독</h3>
-	<div>
-		<div class="row mb-4" style="margin-left: 20px;">
-			{% for director in directors %}
-				<div class="card" style="width:140px; border:0;">
-					<img src="{{ director.img }}" class="card-img-top">
-					<div style="padding: 5px; 5px; 5px; 5px; text-align : center; margin : 0px;">
-						<p>{{ director.name }}</p>
-					</div>
-				</div>
-			{% endfor %}
+<div style="background-color:white; height:100%; padding-top: 40px; padding-left: 10px; color:#2A0A12;">
+	<div class="row" style="margin-left:0; margin-right:0;">
+		<div>
+			<img class="rounded" src="{{ movie.poster_url }}?type=m203_290_2">
+			<h5 style="text-align:center; width:203px; ">{{ movie.title }}</h5>
+		</div>
+		<div style="margin-left : 30px; width: 65%">
+		<div class="row" style="margin-top: 5px;">
+			<h3>줄거리</h3>
+			<p style="margin-left:auto;">
+				<i
+					class="{% if user in movie.liked_user.all %}fas{% else %}far{% endif %} fa-heart fa-lg"
+					id="like-btn"
+					data-id="{{ movie.pk }}"
+					style="color: red"
+				>
+				</i>
+			</p>
+		</div>
+		<div style="word-break: break-all; margin-left: 10px; margin-top:10px; font-size: 18px;">
+			&nbsp; {{ movie.discription }}
+		</div>
+		<div style="position : relative;	 top:20px; left: -12px; ">
+			<p class="ex"> 장르 : &nbsp; {% for genre in genres %}{{genre.name}} &nbsp; {% endfor %}</p>
+			<p class="ex"> 상영 시간 : &nbsp; {{ movie.showtime }}분</p>
+			<p class="ex"> 평점 : &nbsp; {{ movie.rating }} 점</p>
+		</div>
 		</div>
 	</div>
-</div>
-
-<div style="margin-top:40px;">
-	<h3>출연 배우</h3>
-	<div>
-		<div class="row mb-4" style="margin-left:20px;">
-			{% for actor in actors %}
-				<div class="card mr-4" style="width:140px; border:0;">
-					<img src="{{ actor.img }}" class="card-img-top">
-					<div style="padding: 5px; 5px; 5px; 5px; text-align : center; margin : 0px;">
-						<p>{{ actor.name }}</p>
+	<br>
+	<hr>
+	<div style="margin-top:40px;">
+		<h3>감독</h3>
+		<div>
+			<div class="row mb-4" style="margin-left: 20px;">
+				{% for director in directors %}
+					<div class="card" style="width:140px; border:0;">
+						<img src="{{ director.img }}" class="card-img-top">
+						<div style="padding: 5px; 5px; 5px; 5px; text-align : center; margin : 0px;">
+							<p class="center">{{ director.name }}</p>
+						</div>
 					</div>
-				</div>
-			{% endfor %}
+				{% endfor %}
+			</div>
 		</div>
 	</div>
-</div>
+
+	<hr>
+	<div style="margin-top:40px;">
+		<h3>출연 배우</h3>
+		<div>
+			<div class="row mb-4" style="margin-left:20px;">
+				{% for actor in actors %}
+					<div class="card mr-4" style="width:140px; border:0;">
+						<img src="{{ actor.img }}" class="card-img-top">
+						<div style="padding: 5px; 5px; 5px; 5px; text-align : center; margin : 0px;">
+							<p class="center">{{ actor.name }}</p>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
 
 
-<hr>
-{% if user.is_authenticated %}
-<form action="{% url 'movies:review_create' movie.pk %}" method="post">
-  {% csrf_token %}
-  {{ review_form.as_table }}
-  <button type="submit">작성하기</button>
-</form>
-{% endif %}
-<hr>
-<ul>
-{% for review in reviews %}
-  <li>
-	{% if request.user == review.user %}
-	<form action="{% url 'movies:review_delete' movie.pk review.pk %}" method="post">
-	  {% csrf_token %}
-	  <span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
-	  <button class="btn btn-danger" type="submit">삭제하기</button>
+	{% if user.is_authenticated %}
+	<form action="{% url 'movies:review_create' movie.pk %}" method="post">
+		{% csrf_token %}
+		{{ review_form.as_table }}
+		<button type="submit">작성하기</button>
 	</form>
-	{% else %}
-	<span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
 	{% endif %}
-  </li>
-{% endfor %}
+	<hr>
+	<ul>
+	{% for review in reviews %}
+		<li>
+		{% if request.user == review.user %}
+		<form action="{% url 'movies:review_delete' movie.pk review.pk %}" method="post">
+			{% csrf_token %}
+			<span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
+			<button class="btn btn-danger" type="submit">삭제하기</button>
+		</form>
+		{% else %}
+		<span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
+		{% endif %}
+		</li>
+	{% endfor %}
 
-<script>
-  const likeBtn = document.querySelector('#like-btn')
-  likeBtn.addEventListener('click', function(event) {
-	const movieId = event.target.dataset.id
-	axios.get(`/movies/${movieId}/like/`)
-	  .then(function(response) {
-		if(response.data.liked) {
-		  likeBtn.classList.remove('far')
-		  likeBtn.classList.add('fas')
-		} else {
-		  likeBtn.classList.remove('fas')
-		  likeBtn.classList.add('far')
-		}
-	  })
-  })
-</script>
+	<script>
+		const likeBtn = document.querySelector('#like-btn')
+		likeBtn.addEventListener('click', function(event) {
+		const movieId = event.target.dataset.id
+		axios.get(`/movies/${movieId}/like/`)
+			.then(function(response) {
+			if(response.data.liked) {
+				likeBtn.classList.remove('far')
+				likeBtn.classList.add('fas')
+			} else {
+				likeBtn.classList.remove('fas')
+				likeBtn.classList.add('far')
+			}
+			})
+		})
+	</script>
+</div>
 
 {% endblock container %}
