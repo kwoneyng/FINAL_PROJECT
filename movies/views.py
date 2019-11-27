@@ -62,6 +62,8 @@ def review_delete(request, movie_pk, review_pk):
         return redirect('movies:detail', movie_pk)
     return HttpResponse('You are Unauthorized', status=401)
 
+
+@login_required
 def like(request, movie_pk):
     user = request.user
     movie = get_object_or_404(Movie, pk=movie_pk)
@@ -78,6 +80,7 @@ def like(request, movie_pk):
     return JsonResponse(context)
 
 
+@login_required
 def mylist(request):
     user = request.user
     movies = user.liked_movies.all()
@@ -87,6 +90,7 @@ def mylist(request):
     return render(request, 'movies/mylist.html', context)
 
 
+@login_required
 def recommend_list(request):
     user = request.user
     movies = user.liked_movies.all()
@@ -127,6 +131,7 @@ def recommend_list(request):
     return render(request, 'movies/recommend.html', context)
 
 
+@login_required
 def actor_detail(request, actor_id):
     actor = get_object_or_404(Actor, pk=actor_id)
     movies = actor.movies.all()
@@ -137,6 +142,7 @@ def actor_detail(request, actor_id):
     return render(request, 'movies/actor_detail.html', context)
 
 
+@login_required
 def director_detail(request, director_id):
     director = get_object_or_404(Director, pk=director_id)
     movies = director.movies.all()
