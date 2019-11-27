@@ -186,10 +186,7 @@ def push(request):
                     watchgrade = response_movieCd['audits'][0]['watchGradeNm']
                 else:
                     watchgrade = ''
-<<<<<<< HEAD
-=======
-
->>>>>>> 21b13d4d8948296755fc6f00cb8f32db5d26a743
+                    
                 if response_movieCd['companys']:
                     company = response_movieCd['companys'][0]['companyNm']
                 else:
@@ -259,7 +256,6 @@ def push(request):
                             else:
                                 poster_url = 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'
 
-<<<<<<< HEAD
                     div_people = soup.find('div', 'people')
                     imgPtag = div_people.find_all('img')
 
@@ -287,40 +283,10 @@ def push(request):
                                     direct.img = tag.attrs['src']
                                     direct.name = nm
                                     direct.save()
-=======
-                        div_people = soup.find('div', 'people')
-                        imgPtag = div_people.find_all('img')
-
-                        for tag in imgPtag:
-                            if 'alt' in tag.attrs and 'src' in tag.attrs:
-                                for cd, nm in selActor:
-                                    # print(cd,nm)
-                                    if nm == tag.attrs['alt']:
-                                        if Actor.objects.filter(code=cd):
-                                            continue
-                                        # print(f'{nm} 생성')
-                                        actor = Actor()
-                                        actor.code = cd
-                                        actor.img = tag.attrs['src']
-                                        actor.name = nm
-                                        actor.save()
-                                for cd, nm in selDirector:
-                                    # print(cd,nm)
-                                    if nm == tag.attrs['alt']:
-                                        if Director.objects.filter(code=cd):
-                                            continue
-                                        # print(f'{nm} 생성')
-                                        direct = Director()
-                                        direct.code = cd
-                                        direct.img = tag.attrs['src']
-                                        direct.name = nm
-                                        direct.save()
->>>>>>> 21b13d4d8948296755fc6f00cb8f32db5d26a743
                         if soup.select_one('p.con_tx'):
                             discrip = soup.select_one('p.con_tx').text
                         else:
                             discrip = ''
-<<<<<<< HEAD
                 else:
                     movie = response_naver['items'][0]
                     link = movie['link']
@@ -401,89 +367,6 @@ def push(request):
                         gen = Genre.objects.filter(name=nm).first()
                         if gen:
                             gen.movies.add(movie)
-=======
-
-                    else:
-                        movie = response_naver['items'][0]
-                        link = movie['link']
-                        rating = movie['userRating']
-                        html = urlopen(link)
-                        source = html.read()
-                        html.close()
-                        soup = BeautifulSoup(source, 'html.parser')
-                        div_poster = soup.find('div', 'poster')
-                        imgTag = div_poster.find_all('img')
-                        for tag in imgTag:
-                            if 'src' in tag.attrs:
-                                poster_url = tag.attrs['src'].split('jpg?')[0]+'jpg'
-                            else:
-                                poster_url = 'https://ssl.pstatic.net/static/movie/2012/06/dft_img203x290.png'
-
-                        div_people = soup.find('div', 'people')
-                        imgPtag = div_people.find_all('img')
-
-                        for tag in imgPtag:
-                            if 'alt' in tag.attrs and 'src' in tag.attrs:
-                                for cd, nm in selActor:
-                                    # print(cd, nm)
-                                    if nm == tag.attrs['alt']:
-                                        if Actor.objects.filter(code=cd):
-                                            continue
-                                        # print(f'{nm} 생성')
-                                        actor = Actor()
-                                        actor.code = cd
-                                        actor.img = tag.attrs['src']
-                                        actor.name = nm
-                                        actor.save()
-                                for cd, nm in selDirector:
-                                    # print(cd, nm)
-                                    if nm == tag.attrs['alt']:
-                                        if Director.objects.filter(code=cd):
-                                            continue
-                                        # print(f'{nm} 생성')
-                                        direct = Director()
-                                        direct.code = cd
-                                        direct.img = tag.attrs['src']
-                                        direct.name = nm
-                                        direct.save()
-                        if soup.select_one('p.con_tx'):
-                            discrip = soup.select_one('p.con_tx').text
-                        else:
-                            discrip = ''
-
-                        movieform = Movie()
-                        movieform.title = movieNm
-                        movieform.code = movieCd
-                        movieform.openyear = openyear
-                        movieform.showtime = showtime
-                        movieform.watchgrade = watchgrade
-                        movieform.company = company
-                        movieform.audience = audience
-                        movieform.discription = discrip
-                        movieform.poster_url = poster_url
-                        movieform.rating = float(rating)
-                        movieform.save()
-
-                        movie = Movie.objects.filter(code=movieCd).first()
-                        print(selActor)
-                        print(selDirector)
-                        print(genres)
-
-                        for cd, nm in selActor:
-                            act = Actor.objects.filter(code=cd).first()
-                            if act:
-                                act.movies.add(movie)
-                        
-                        for cd, nm in selDirector:
-                            dirt = Director.objects.filter(code=cd).first()
-                            if dirt :
-                                dirt.movies.add(movie)
-                        
-                        for nm in genres:
-                            gen = Genre.objects.filter(name=nm).first()
-                            if gen:
-                                gen.movies.add(movie)
->>>>>>> 21b13d4d8948296755fc6f00cb8f32db5d26a743
 
             except:
                 pass
