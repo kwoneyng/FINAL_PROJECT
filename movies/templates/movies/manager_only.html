@@ -4,7 +4,7 @@
 
 {% block container %}
 
-<form action="{% url 'movies:movie_create' %}" method="post">
+<form action="{% url 'movies:movie_create' %}" method="post" style="margin-top:250px;">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">새 영화 등록하기</button>

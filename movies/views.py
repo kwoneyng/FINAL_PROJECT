@@ -194,7 +194,7 @@ def movie_update(request, movie_pk):
             return redirect('movies:detail', movie_pk)
     else:
         form = MovieForm(instance=movie)     
-    context = {'form': form}
+    context = {'movie': movie}
     return render(request, 'movies/movie_update.html', context)
 
 

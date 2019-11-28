@@ -1,11 +1,41 @@
 {% extends 'base.html' %}
 
 {% block title %}Movie::Update{% endblock title %}
-
+{% block style %}
+.main_div { 
+	height: 900px;
+	display :flex;
+	justify-content:center;
+	}
+	p{
+        margin-bottom: 6px;
+		margin-right:20px;
+        text-align:center;
+	}
+    input{
+        text-align:center;
+    }
+{% endblock style %}
 {% block container %}
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">수정하기</button>
-</form>
+<div class="main_div">
+	<div style="padding:30px; border-radius: 12px; margin-top:140px; background-color:#F2F2F2; display:flex; width:80%; height:60%; justify-content:center;">
+		<div style="display:flex; justify-content:center; width:100%">
+		<form method="post" >
+			{% csrf_token %}
+			<div style="width:100%;">
+			<p><label for="id_title">Title</label></p><p> <input type="text" name="title" style="width:400px;" value="{{movie.title}}" maxlength="50" required id="id_title"></p>
+			<p><label style="text-align:center;" for="id_openyear">Openyear</label></p><p><input type="text" style="width:400px;" name="openyear" value="{{movie.openyear}}" maxlength="10" required id="id_openyear"></p>
+            <p><label for="id_showtime">Showtime</label></p><p> <input type="text" name="showtime" style="width:400px;" value="{{movie.showtime}}" maxlength="10" required id="id_showtime"></p>
+            <p><label for="id_watchgrade">Watchgrade</label></p><p> <input type="text" name="watchgrade" style="width:400px;" value="{{movie.watchgrade}}" maxlength="30" required id="id_watchgrade"></p>
+            <p><label for="id_audience">Audience</label></p><p> <input type="number" name="audience" style="width:400px;" value="{{movie.audience}}" required id="id_audience"></p>
+            <p><label for="id_poster_url">Poster url</label></p><p> <input type="text" name="poster_url" style="width:400px;" value="{{movie.poster_url}}" maxlength="150" required id="id_poster_url"></p>
+			</div>
+			<div style="display:flex; justify-content:center;">
+			<button class="btn-success" type="submit" style="height:30px; width:100px;">수정하기</button>
+			</div>
+		</form>
+		</div>
+		<hr>
+	</div>
+</div>
 {% endblock container %}

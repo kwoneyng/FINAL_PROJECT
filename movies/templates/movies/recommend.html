@@ -3,18 +3,42 @@
 {% block title %}추천{% endblock title %}
 
 {% block container %}
-
+<div style="margin-top:160px;">
 {% for genreNm, movies in genre_list.items %}
-  <h2> {{ genreNm }} </h2>
-  <ul>
-    {% for movie in movies %}
-      <div>
-        <img src="{{ movie.poster_url }}?type=m203_290_2">
-        <p>{{ movie.title }}</p>
-        <p><a href="{% url 'movies:detail' movie.pk %}" class="btn btn-success">영화정보</a></p>
-      </div>
-    {% endfor %}
-  </ul>
-{% endfor %}
+<p style="text-align:center; font-weight:bold; font-size:20px; margin-bottom:0;"> {{ genreNm }} </p>
+<ul>
+<div class="main_div" style=" color:#2A0A12;">
+	<div class="row" style="display:flex; justify-content:center; width:100%;">
+            {% for movie in movies %}
+                <div style="margin:20px;">
+                    <a href="{% url 'movies:detail' movie.id %}">
+                        <img id="gotail" src="{{ movie.poster_url }}" style="border: 1px solid; border-radius: 10px; width: 120px; height: 200px;">
+                    </a>
+            {% comment %} <div>
+                <img src="{{ movie.poster_url }}?type=m203_290_2">
+                <p>{{ movie.title }}</p>
+                <p><a href="{% url 'movies:detail' movie.pk %}" class="btn btn-success">영화정보</a></p>
+            </div> {% endcomment %}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+
+
+		{% comment %} {% for movie in movies %}
+					
+
+					<div style="font-size:13px; border: 1px solid;  text-align:center; width:150px; height:40px; background-color:white; border-radius: 0px 0px 10px 10px">
+					 <div style="display:inline-block; margin:0; height:30px;">
+					 {{ movie.title }} 
+					 </div>
+					 </div>
+			</div>
+		{% endfor %} {% endcomment %}
+	</div>
+</div>
+</div>
+<script>
+</script>
 
 {% endblock container %}

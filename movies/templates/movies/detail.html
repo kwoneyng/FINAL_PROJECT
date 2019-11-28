@@ -27,7 +27,14 @@
 		</div>
 		<div style="margin-left : 15px; width: 65%">
 		<div class="row" style="margin-top: 5px; margin-left:0;">
-			<h3>줄거리</h3>
+			<h3 style="margin-right:20px;">줄거리</h3>
+      {% if user.is_superuser %}
+        <form action="{% url 'movies:movie_delete' movie.pk %}" method="post">
+        <a href="{% url 'movies:movie_update' movie.pk %}"><i style="font-size:20px; margin-right:10px; color:black;" class="fas fa-edit"></i></a>
+          {% csrf_token %}
+          <button type="submit" style="border:0; background-color:white; font-size:20px;"><i class="fas fa-trash-alt"></i></button>
+        </form>
+      {% endif %}
 			<p style="margin-left:auto;">
 				<i
 					class="{% if user in movie.liked_user.all %}fas{% else %}far{% endif %} fa-heart fa-lg"
@@ -37,15 +44,8 @@
 				>
 				</i>
 			</p>
-      {% if user.is_superuser %}
-        <a href="{% url 'movies:movie_update' movie.pk %}">수정하기</a>
-        <form action="{% url 'movies:movie_delete' movie.pk %}" method="post">
-          {% csrf_token %}
-          <button type="submit">삭제하기</button>
-        </form>
-      {% endif %}
 		</div>
-		<div style="word-break: break-all; margin-left: 10px; margin-top:10px; font-size: 18px;">
+		<div style="word-break: break-all; margin-left: 10px; margin-top:10px; font-size: 15px;">
 			&nbsp; {{ movie.discription }}
 		</div>
 		<div style="position : relative;	 top:20px; left: 0; ">

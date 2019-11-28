@@ -64,7 +64,7 @@
   <header class="row container head" style="background-color: black;">
 
     <div class="center">
-        <h1>MOVIE4</h1>
+        <h1><a href="{% url 'movies:index' %}" style="color:white; text-decoration:none;">MOVIE4</a></h1>
     </div>
     {% if user.is_authenticated %}
     <div class="fucn" >
@@ -75,9 +75,9 @@
     <div class="auth">
       <p>
         <a href="{% url 'accounts:logout' %}" style="color:#FFFFFF; font-size:13px; margin-right:10px;">로그아웃</a>
-        <a href="{% url 'accounts:update' %}" style="color:#FFFFFF; font-size:13px;">회원정보 수정</a>
+        <a href="{% url 'accounts:update' %}" style="color:#FFFFFF; font-size:13px; margin-right:10px;">회원정보 수정</a>
       {% if user.is_superuser %}
-        <a href="{% url 'movies:manager_only' %}" style="color: #2A0A12; text-decoration:none;">  관리자 </a>
+        <a href="{% url 'movies:manager_only' %}" style="color: #FFFFFF; font-size:13px; text-decoration:none;">  관리자 </a>
       {% endif %}
       </p>
     </div>
