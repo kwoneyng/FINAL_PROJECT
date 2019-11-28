@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <!-- FontAwesome -->
-  {% comment %} <script src="https://kit.fontawesome.com/3b26fded11.js" crossorigin="anonymous"></script> {% endcomment %}
+  <script src="https://kit.fontawesome.com/3b26fded11.js" crossorigin="anonymous"></script>
   <!-- Axios -->
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <title>{% block title %}{% endblock title %}</title>
@@ -31,7 +31,7 @@
   .auth {
       position: fixed;
       right : 20px;
-      top : 5px;
+      top : 70px;
   }
   .head {
     max-width:100%; 
@@ -49,7 +49,11 @@
       margin-right:auto;
   }
   .fucn{
+            text-align: right;
+            width: 100%;
+            background-color:white;
 			position:fixed;
+            top:100px;
 			right:20px;
 	  }
   {% block style %}
@@ -64,29 +68,24 @@
     </div>
     {% if user.is_authenticated %}
     <div class="fucn" >
-      <a href="{% url 'movies:index' %}" style="color: #2A0A12; text-decoration:none;">[ 홈으로 ]</a> | 
-      <a href="{% url 'movies:mylist' %}" style="color: #2A0A12; text-decoration:none;">[ 찜 목록 ]</a> | 
-      <a href="{% url 'movies:recommend_list' %}" style="color: #2A0A12; text-decoration:none;">[ 추천 영화 ]</a>
-      {% if user.is_superuser %}
-        <a href="{% url 'movies:manager_only' %}" style="color: #2A0A12; text-decoration:none;"> | [ 관리자 ]</a>
-      {% endif %}
+        <a href="{% url 'movies:index' %}" style="color: #000000; font-size:30px; margin-right:10px; text-decoration:none;"><i class="fas fa-home"></i></a>
+        <a href="{% url 'movies:mylist' %}" style="color: #000000; font-size:30px; margin-right:10px; text-decoration:none;"><i class="fas fa-heart"></i></a>
+        <a href="{% url 'movies:recommend_list' %}" style="color: #000000; font-size:30px; margin-right:10px; text-decoration:none;"><i class="far fa-thumbs-up"></i></a>
     </div>
     <div class="auth">
       <p>
-        <a href="{% url 'accounts:logout' %}" style="color:#2A0A12; font-size : 20px;">로그아웃</a>
-        <a href="{% url 'accounts:update' %}" style="color:#2A0A12; font-size : 20px;">회원정보 수정</a>
+        <a href="{% url 'accounts:logout' %}" style="color:#FFFFFF; font-size:13px; margin-right:10px;">로그아웃</a>
+        <a href="{% url 'accounts:update' %}" style="color:#FFFFFF; font-size:13px;">회원정보 수정</a>
+      {% if user.is_superuser %}
+        <a href="{% url 'movies:manager_only' %}" style="color: #2A0A12; text-decoration:none;">  관리자 </a>
+      {% endif %}
       </p>
     </div>
     {% endif %}
 
   </header>
 
-  <div class="container" style="margin-top: 100px;">
-    <div class="fucn" >
-        <a href="{% url 'movies:index' %}" style="color: #F6CED8; text-decoration:none;">[ 홈으로 ]</a> | 
-        <a href="{% url 'movies:mylist' %}" style="color: #F6CED8; text-decoration:none;">[ 찜 목록 ]</a> | 
-        <a href="{% url 'movies:recommend_list' %}" style="color: #F6CED8; text-decoration:none;">[ 추천 영화 ]</a>
-    </div>
+  <div class="container" style="margin-top: 110px;">
   {% block container %}{% endblock container %}
   </div>
   

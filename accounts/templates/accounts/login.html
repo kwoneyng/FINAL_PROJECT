@@ -33,10 +33,6 @@
 			</div>
 		</form>
 		</div>
-		{% comment %} <form action="{% url 'accounts:signup' %}" method="post">
-		{% csrf_token %}
-			<button type="submit" style="width:70px; height:30px;">회원가입</button>
-		</form> {% endcomment %}
 		<hr>
 	</div>
 </div>
@@ -44,7 +40,7 @@
 <script>
 const button = document.querySelector('#my-button')
 	button.addEventListener('click',() => {
-		location.href="/accounts/signup/"
+		location.href="/accounts/signup"
 	})
 </script>
 {% endblock container %}

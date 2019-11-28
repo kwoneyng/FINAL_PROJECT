@@ -1,12 +1,44 @@
 {% extends 'base.html' %}
 
 {% block title %}회원가입{% endblock title %}
-
+{% block style %}
+.main_div { 
+	height: 900px;
+	display :flex;
+	justify-content:center;
+	}
+	p{
+		margin-right:20px;
+	}
+{% endblock style %}
 {% block container %}
-<h2>회원가입</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">회원가입</button>
-</form>
+
+<div class="main_div">
+	<div style="padding:30px; border-radius: 12px; margin-top:100px; background-color:#F2F2F2; display:flex; width:60%; height:32%; justify-content:center;">
+		<div style="display:flex; justify-content:center; width:100%">
+		<form method="post" >
+			{% csrf_token %}
+			<div style="width:100%;">
+			<p style="text-align:center;">회원가입</p>
+			<p>
+			<input type="text" style="width:300px;" name="username" placeholder="ID : 30자 이내" maxlength="150" autofocus required id="id_username">
+			</p>
+			<p>
+				<input type="password" style="width:300px;" name="password1" placeholder="Password : 8자 이상, 영문 + 숫자" required id="id_password1">
+			</p>
+			<p>
+				<input type="password" style="width:300px;" name="password2" placeholder="Password Check" required id="id_password2">
+			</p>
+			</div>
+			<div style="display:flex; justify-content:center;">
+			<button class="btn-success" type="submit" style="height:30px; width:100px;">회원가입</button>
+			</div>
+			{% comment %} <div style="display:flex; justify-content:center;">
+			<button class="btn-success" style="width:70%;"><div style="width:" id="my-button">회원가입 </div></button>
+			</div> {% endcomment %}
+		</form>
+		</div>
+		<hr>
+	</div>
+</div>
 {% endblock container %}
