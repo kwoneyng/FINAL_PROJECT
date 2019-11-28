@@ -1,11 +1,29 @@
 {% extends 'base.html' %}
 
 {% block title %}나의 찜 리스트{% endblock title %}
-
+{% block style %}
+    .main_div { min-height: 1000px; }
+{% endblock style %}
 {% block container %}
-{% for movie in movies %}
-  <img src="{{ movie.poster_url }}">
-  <h2> {{ movie.title }} </h2>
+<div class="main_div" style="background-color:#F2F2F2; padding-top: 40px; color:#2A0A12;">
+	<div class="row" style="display:flex; justify-content:center; width:100%;">
+		{% for movie in movies %}
+				<div style="margin:20px;">
+					<a href="{% url 'movies:detail' movie.id %}">
+						<img id="gotail" src="{{ movie.poster_url }}" style="border: 1px solid; border-radius: 10px 10px 0px 0px; width: 150px; height: 230px;">
+					</a>
+					
 
-{% endfor %}
+					<div style="font-size:13px; border: 1px solid;  text-align:center; width:150px; height:40px; background-color:white; border-radius: 0px 0px 10px 10px">
+					 <div style="display:inline-block; margin:0; height:30px;">
+					 {{ movie.title }} 
+					 </div>
+					 </div>
+			</div>
+		{% endfor %}
+	</div>
+</div>
+<script>
+</script>
 {% endblock container %}
+
