@@ -1,18 +1,50 @@
 {% extends 'base.html' %}
 
 {% block title %}로그인{% endblock title %}
-
+{% block style %}
+.main_div { 
+	height: 900px;
+	display :flex;
+	justify-content:center;
+	}
+	p{
+		margin-right:20px;
+	}
+{% endblock style %}
 {% block container %}
+<div class="main_div">
+	<div style="padding:60px; border-radius: 12px; margin-top:100px; background-color:#F2F2F2; display:flex; width:60%; height:28%; justify-content:center;">
+		<div style="display:flex; justify-content:center; width:100%">
+		<form method="post" >
+			{% csrf_token %}
+			<div style="width:100%;">
+			<p>
+				<input type="text" style="width:300px;" placeholder="ID" name="username" autofocus required id="id_username" >
+			</p>
+			<p>
+				<input type="password" style="width:100%;" placeholder="Password" name="password" required id="id_passoword">
+			</p>
+			</div>
+			<div style="display:flex; justify-content:center;">
+			<button class="btn-primary" type="submit" style="height:30px; width:70%;">로그인</button>
+			</div>
+			<div style="display:flex; justify-content:center;">
+			<button class="btn-success" style="width:70%;"><div style="width:" id="my-button">회원가입 </div></button>
+			</div>
+		</form>
+		</div>
+		{% comment %} <form action="{% url 'accounts:signup' %}" method="post">
+		{% csrf_token %}
+			<button type="submit" style="width:70px; height:30px;">회원가입</button>
+		</form> {% endcomment %}
+		<hr>
+	</div>
+</div>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">로그인</button>
-</form>
-<hr>
-<form action="{% url 'accounts:signup' %}" method="post">
-  {% csrf_token %}
-  <button type="submit">회원가입</button>
-</form>
-
+<script>
+const button = document.querySelector('#my-button')
+	button.addEventListener('click',() => {
+		location.href="/accounts/signup/"
+	})
+</script>
 {% endblock container %}

@@ -25,8 +25,8 @@
 			<img class="rounded" src="{{ movie.poster_url }}?type=m203_290_2">
 			<h5 style="text-align:center; width:203px; ">{{ movie.title }}</h5>
 		</div>
-		<div style="margin-left : 30px; width: 65%">
-		<div class="row" style="margin-top: 5px;">
+		<div style="margin-left : 15px; width: 65%">
+		<div class="row" style="margin-top: 5px; margin-left:0;">
 			<h3>줄거리</h3>
 			<p style="margin-left:auto;">
 				<i
@@ -41,7 +41,7 @@
 		<div style="word-break: break-all; margin-left: 10px; margin-top:10px; font-size: 18px;">
 			&nbsp; {{ movie.discription }}
 		</div>
-		<div style="position : relative;	 top:20px; left: -12px; ">
+		<div style="position : relative;	 top:20px; left: 0; ">
 			<p class="ex"> 장르 : &nbsp; {% for genre in genres %}{{genre.name}} &nbsp; {% endfor %}</p>
 			<p class="ex"> 상영 시간 : &nbsp; {{ movie.showtime }}분</p>
 			<p class="ex"> 평점 : &nbsp; {{ movie.rating }} 점</p>
