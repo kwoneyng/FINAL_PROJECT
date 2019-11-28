@@ -155,7 +155,7 @@ def director_detail(request, director_id):
 
 @login_required
 def manager_only(request):
-    return render(request, 'manager_only.html')
+    return render(request, 'movies/manager_only.html')
 
 
 @require_POST
@@ -165,6 +165,7 @@ def movie_delete(request, movie_pk):
         movie.delete()
         return redirect('movies:index')
     return redirect('movies:detail', movie_pk)
+
 
 # movie_create
 @login_required
@@ -181,7 +182,18 @@ def movie_create(request):
     context = {'form': form}
     return render(request, 'movies/movie_create.html', context)
 
+
 # movie_update
+@login_required
+def movie_update(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    form = MovieForm(request.POST, instance=movie)
+    if form.is_valid():
+        form.save()
+        return redirect('movies:detail', movie_pk)
+    context = {'form': form}
+    return render(request, 'movies/movie_update.html', context)
+
 
 # manage users
 

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Users{% endblock title %}
+
+{% block container %}
+  {% for user in users %}
+    <ul>
+      <li>
+        <p>Username: {{ user.username }} <a href="{% url 'accounts:delete_by_manager' user.id %}">[삭제하기]</a> </p>        
+      </li>
+    </ul>
+  
+  {% endfor %}
+
+{% endblock container %}
