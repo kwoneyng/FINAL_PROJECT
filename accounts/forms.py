@@ -5,7 +5,7 @@ class CustomUserChangeForm(UserChangeForm):
 
     class Meta:
         model = get_user_model() # accounts.User
-        fields = ['user_id']
+        fields = ['username']
 
 
 # 커스터마이징 한 유저모델을 인식하지 못해서 직접 get_user_model 함수로
