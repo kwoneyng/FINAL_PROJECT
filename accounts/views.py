@@ -66,13 +66,14 @@ def delete(request):
 
 @login_required
 def update(request):
+    user = request.user
     if request.method == 'POST':
-        form = CustomUserChangeForm(request.POST, instance=request.user)
+        form = CustomUserChangeForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
             return redirect('movies:index')
     else:
-        form = CustomUserChangeForm(instance=request.user)
+        form = CustomUserChangeForm(instance=user)
     context = {'form': form}
     return render(request, 'accounts/update.html', context)
 
