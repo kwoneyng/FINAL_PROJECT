@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <!-- FontAwesome -->
-  <script src="https://kit.fontawesome.com/3b26fded11.js" crossorigin="anonymous"></script>
+  {% comment %} <script src="https://kit.fontawesome.com/3b26fded11.js" crossorigin="anonymous"></script> {% endcomment %}
   <!-- Axios -->
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <title>{% block title %}{% endblock title %}</title>
@@ -63,18 +63,19 @@
         <h1>MOVIE4</h1>
     </div>
     {% if user.is_authenticated %}
-    <div class="auth">
-        <p>
-            <a href="{% url 'accounts:logout' %}" style="color:#2A0A12; font-size : 20px;">로그아웃</a>
-            <a href="{% url 'accounts:update' %}" style="color:#2A0A12; font-size : 20px;">회원정보 수정</a>
-        </p>
+    <div class="fucn" >
+      <a href="{% url 'movies:index' %}" style="color: #2A0A12; text-decoration:none;">[ 홈으로 ]</a> | 
+      <a href="{% url 'movies:mylist' %}" style="color: #2A0A12; text-decoration:none;">[ 찜 목록 ]</a> | 
+      <a href="{% url 'movies:recommend_list' %}" style="color: #2A0A12; text-decoration:none;">[ 추천 영화 ]</a>
+      {% if user.is_superuser %}
+        <a href="{% url 'movies:manager_only' %}" style="color: #2A0A12; text-decoration:none;"> | [ 관리자 ]</a>
+      {% endif %}
     </div>
-    {% else %}
     <div class="auth">
-        <p>
-        <a href="{% url 'accounts:login' %}">로그인</a>
-        <a href="{% url 'accounts:signup' %}">회원가입</a>
-        </p>
+      <p>
+        <a href="{% url 'accounts:logout' %}" style="color:#2A0A12; font-size : 20px;">로그아웃</a>
+        <a href="{% url 'accounts:update' %}" style="color:#2A0A12; font-size : 20px;">회원정보 수정</a>
+      </p>
     </div>
     {% endif %}
 

@@ -37,6 +37,13 @@
 				>
 				</i>
 			</p>
+      {% if user.is_superuser %}
+        <a href="{% url 'movies:movie_update' movie.pk %}">수정하기</a>
+        <form action="{% url 'movies:movie_delete' movie.pk %}" method="post">
+          {% csrf_token %}
+          <button type="submit">삭제하기</button>
+        </form>
+      {% endif %}
 		</div>
 		<div style="word-break: break-all; margin-left: 10px; margin-top:10px; font-size: 18px;">
 			&nbsp; {{ movie.discription }}

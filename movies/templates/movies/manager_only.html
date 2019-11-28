@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin{% endblock title %}
+
+{% block container %}
+
+<form action="{% url 'movies:movie_create' %}" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">새 영화 등록하기</button>
+</form>
+
+<form action="{% url 'movies:push' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">DB 업데이트하기</button>
+</form>
+
+<form action="{% url 'accounts:index' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">회원 관리</button>
+</form>
+
+{% endblock container %}

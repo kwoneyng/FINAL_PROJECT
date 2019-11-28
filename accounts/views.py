@@ -1,9 +1,24 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import login as auth_login, logout as auth_logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from .forms import CustomUserChangeForm, CustomUserCreationForm
+from django.contrib.auth import get_user_model
+
+
+@require_POST
+def index(request):
+    users = get_user_model().objects.all()
+    context = {'users': users}
+    return render(request, 'accounts/index.html', context)
+
+
+@require_POST
+def delete_by_manager(request, user_pk):
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    user.delete()
+    return redirect('accounts:index')
 
 
 def signup(request):

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse, JsonResponse
 from .models import Movie, Genre, Review
-from .forms import ReviewForm
+from .forms import ReviewForm, MovieForm
 from datetime import datetime, timedelta
 from IPython import embed
 from decouple import config
@@ -62,6 +62,8 @@ def review_delete(request, movie_pk, review_pk):
         return redirect('movies:detail', movie_pk)
     return HttpResponse('You are Unauthorized', status=401)
 
+
+@login_required
 def like(request, movie_pk):
     user = request.user
     movie = get_object_or_404(Movie, pk=movie_pk)
@@ -78,6 +80,7 @@ def like(request, movie_pk):
     return JsonResponse(context)
 
 
+@login_required
 def mylist(request):
     user = request.user
     movies = user.liked_movies.all()
@@ -87,6 +90,7 @@ def mylist(request):
     return render(request, 'movies/mylist.html', context)
 
 
+@login_required
 def recommend_list(request):
     user = request.user
     movies = user.liked_movies.all()
@@ -127,6 +131,7 @@ def recommend_list(request):
     return render(request, 'movies/recommend.html', context)
 
 
+@login_required
 def actor_detail(request, actor_id):
     actor = get_object_or_404(Actor, pk=actor_id)
     movies = actor.movies.all()
@@ -137,6 +142,7 @@ def actor_detail(request, actor_id):
     return render(request, 'movies/actor_detail.html', context)
 
 
+@login_required
 def director_detail(request, director_id):
     director = get_object_or_404(Director, pk=director_id)
     movies = director.movies.all()
@@ -145,8 +151,54 @@ def director_detail(request, director_id):
         'movies': movies,
     }
     return render(request, 'movies/director_detail.html', context)
-    
 
+
+@login_required
+def manager_only(request):
+    return render(request, 'movies/manager_only.html')
+
+
+@require_POST
+def movie_delete(request, movie_pk):
+    if request.user.is_superuser:
+        movie = get_object_or_404(Movie, pk=movie_pk)
+        movie.delete()
+        return redirect('movies:index')
+    return redirect('movies:detail', movie_pk)
+
+
+# movie_create
+@login_required
+def movie_create(request):
+    if request.method == 'POST':
+        form = MovieForm(request.POST)
+        if form.is_valid():
+            movie = form.save(commit=False)
+            movie.user = request.user
+            movie.save()
+            return redirect('movies:detail', movie.pk)
+    else:
+        form = MovieForm()
+    context = {'form': form}
+    return render(request, 'movies/movie_create.html', context)
+
+
+# movie_update
+@login_required
+def movie_update(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    form = MovieForm(request.POST, instance=movie)
+    if form.is_valid():
+        form.save()
+        return redirect('movies:detail', movie_pk)
+    context = {'form': form}
+    return render(request, 'movies/movie_update.html', context)
+
+
+# manage users
+
+
+@require_POST
 def push(request):
     key = config('KEY')
     # targetDt = '20191101'
