@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% comment %} {% load bootstrap4 %} {% endcomment %}
+
+{% block title %}
+Movie Create
+{% endblock title %}
+
+{% block container %}
+<h1>Create Movie</h1>
+
+<form action="{% url 'movies:index' %}">
+  {% csrf_token %}
+  <button type="submit">Back</button>
+</form>
+
+<form method="post">
+  {% csrf_token %}
+  
+  <button type="submit">Submit</button>
+  <button type="reset">Cancel</button>
+</form>
+{% endblock container %}

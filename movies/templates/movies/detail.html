@@ -37,6 +37,10 @@
 				>
 				</i>
 			</p>
+      {% if user.is_superuser %}
+        <p> DELETE </p>
+        <p> UPDATE </p>
+      {% endif %}
 		</div>
 		<div style="word-break: break-all; margin-left: 10px; margin-top:10px; font-size: 18px;">
 			&nbsp; {{ movie.discription }}
