@@ -209,7 +209,7 @@ def push(request):
                 'X-Naver-Client-Secret' : client_secret,
             }
 
-    for i in range(1, 6):
+    for i in range(1, 52):
         print('==================================')
         print(f'{i}주차 영화 시작!')
         targetDt = datetime(2019, 11, 23) - timedelta(weeks=i)
