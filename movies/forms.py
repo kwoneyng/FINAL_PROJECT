@@ -13,4 +13,5 @@ class MovieForm(forms.ModelForm):
 
     class Meta:
         model = Movie
-        fields = '__all__'
+        fields = ['title', 'openyear', 'showtime', 'watchgrade', 'audience', 'poster_url', ]
+        # fields = '__all__'

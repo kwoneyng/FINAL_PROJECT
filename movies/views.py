@@ -187,10 +187,13 @@ def movie_create(request):
 @login_required
 def movie_update(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
-    form = MovieForm(request.POST, instance=movie)
-    if form.is_valid():
-        form.save()
-        return redirect('movies:detail', movie_pk)
+    if request.method == 'POST':
+        form = MovieForm(request.POST, instance=movie)
+        if form.is_valid():
+            form.save()
+            return redirect('movies:detail', movie_pk)
+    else:
+        form = MovieForm(instance=movie)     
     context = {'form': form}
     return render(request, 'movies/movie_update.html', context)
 
