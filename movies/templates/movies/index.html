@@ -10,18 +10,15 @@
       {% for movie in movie_list %}
         <div>
           <div style="width: 16rem; height: 550px; margin: 10px;">
-            <img src="{{ movie.poster_url }}" style="width : 16rem; height:23rem; border:1px solid; border-radius:13px 13px 0px 0px;" alt="exit">
+            <a href="{% url 'movies:detail' movie.pk %}"><img src="{{ movie.poster_url }}" style="width : 16rem; height:23rem; border:1px solid; border-radius:13px 13px 0px 0px;" alt="exit"></a>
             <div style="height:160px; border-radius:0px 0px 13px 13px; border: 1px solid; display: flex; justify-content:center; ">
-              <div>
-              <p class="card-title" style="text-align:center; font-size:15px; height:40px; font-weight:bold; margin-top: 10px;"> {{ movie.title }} </p>
-              <p class="card-text" style="text-align:center; height:15px; margin:0; font-size: 13px; color:gray;"> {{ movie.watchgrade }} </p>
-              <div style="height:100px; display:flex; ju">
-              <a href="{% url 'movies:detail' movie.pk %}" target="__blank__" class="btn btn-success" style="height: 40px; position: relative; top:10px; width:200px;">영화정보 보러가기</a>
-							</div>
-
-    
-              {% comment %} href="{% url 'movies:detail' movie.pk %}" target="__blank__" {% endcomment %}
-            </div>
+              	<div>
+									<p class="card-title" style="text-align:center; font-size:15px; height:40px; font-weight:bold; margin-top: 10px;"> {{ movie.title }} </p>
+									<p class="card-text" style="text-align:center; height:15px; margin:0; font-size: 13px; color:gray;"> {{ movie.watchgrade }} </p>
+										<div style="height:100px; display:flex; justify-content:center;">
+										<a href="{% url 'movies:detail' movie.pk %}" class="btn btn-success" style="height: 40px; position: relative; top:10px; width:200px;">영화정보 보러가기</a>
+            		</div>    
+            	</div>
             </div>
           </div>
         </div>      

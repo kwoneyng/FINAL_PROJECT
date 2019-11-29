@@ -64,9 +64,9 @@
 		<div class="row mb-4" style="margin-left: 20px;">
 			{% for director in directors %}
 				<div class="card" style="width:140px; border:0;">
-					<img src="{{ director.img }}" class="card-img-top">
+					<a href="{% url 'movies:director_detail' director.id %}"><img src="{{ director.img }}" class="card-img-top"></a>
 					<div style="padding: 5px; 5px; 5px; 5px; text-align : center; margin : 0px;">
-            <a href="{% url 'movies:director_detail' director.id %}">{{ director.name }}</a>
+            {{ director.name }}
 					</div>
 				{% endfor %}
 			</div>
@@ -80,10 +80,10 @@
 		<div class="row mb-4" style="margin-left:20px;">
 			{% for actor in actors %}
 				<div class="card mr-4" style="width:140px; border:0;">
-					<img src="{{ actor.img }}" class="card-img-top">
+					<a href="{% url 'movies:actor_detail' actor.id %}"><img src="{{ actor.img }}" class="card-img-top"></a>
 					<div style="padding: 5px; 5px; 5px; 5px; text-align : center; margin : 0px;">
 						{% comment %} <p>{{ actor.name }}</p> {% endcomment %}
-            <a href="{% url 'movies:actor_detail' actor.id %}">{{ actor.name }}</a>
+            {{ actor.name }}
 					</div>
 				</div>
 			{% endfor %}
