@@ -105,11 +105,11 @@
 		{% if request.user == review.user %}
 		<form action="{% url 'movies:review_delete' movie.pk review.pk %}" method="post">
 			{% csrf_token %}
-			<span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
+			<span>{{ review.content }} - {{ review.score }} / {{ review.user }}</span>
 			<button class="btn btn-danger" type="submit">삭제하기</button>
 		</form>
 		{% else %}
-		<span>{{ review.content }} - {{ review.created_at }} / {{ review.user }}</span>
+		<span>{{ review.content }} - {{ review.score }} / {{ review.user }}</span>
 		{% endif %}
 		</li>
 	{% endfor %}
